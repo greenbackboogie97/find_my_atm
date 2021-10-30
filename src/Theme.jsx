@@ -5,19 +5,15 @@ import { CssBaseline } from '@material-ui/core';
 const theme = createTheme({
   palette: {
     primary: {
-      light: '#69DADB',
       main: '#1597E5',
-      dark: '#113CFC',
-      darker: '#193498'
     },
-    background: '#ffff',
   },
   typography: {
     fontFamily: 'Rubik',
   },
   spacing: 4,
   shape: {
-    borderRadius: 12,
+    borderRadius: 16,
   },
   props: {
     MuiPaper: {
@@ -29,6 +25,10 @@ const theme = createTheme({
     },
     MuiMenuItem: {
       dense: true,
+    },
+    MuiSelect: {
+      variant: 'outlined',
+      autoWidth: true,
     },
   },
 });
