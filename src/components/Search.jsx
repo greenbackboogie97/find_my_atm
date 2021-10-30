@@ -7,14 +7,16 @@ import { withStyles } from '@material-ui/styles';
 
 const LeftArrowAdornment = withStyles({
   root: {
-    backgroundColor: '#eff0f2',
+    backgroundColor: '#ffff',
     borderRadius: 4,
-    border: '1px solid #b4b4b4',
+    border: '1px solid #dfdfdf',
+    cursor: 'pointer',
     width: 26,
     height: 22,
     marginLeft: 14,
     color: '#aaa',
-    boxShadow: '1px 1px gray, 0 0 1px gray',
+    boxShadow:
+      '1px 1px 2px #efefef, -1px -1px 2px #ffff, -1px -1px 2px #efefef inset',
   },
 })(({ classes }) => <MdArrowLeft className={classes.root} />);
 
@@ -46,7 +48,16 @@ export default function Search() {
         results.filter((record) => record.City.startsWith(value))[0]?.City
       );
 
-    setStore((prev) => ({ ...prev, records: [...filterdByCity] }));
+    const validCoords = filterdByCity.filter((record) => {
+      return (
+        record.X_Coordinate >= 29 &&
+        record.X_Coordinate <= 33 &&
+        record.Y_Coordinate >= 34 &&
+        record.Y_Coordinate <= 36
+      );
+    });
+
+    setStore((prev) => ({ ...prev, records: [...validCoords] }));
   }, [value, setStore]);
 
   useEffect(() => {
@@ -68,7 +79,10 @@ export default function Search() {
         dir='rtl'
         className={classes.searchInput}
         InputProps={{
-          endAdornment: suggestion ? <LeftArrowAdornment /> : null,
+          endAdornment:
+            suggestion && suggestion.startsWith(value) ? (
+              <LeftArrowAdornment onClick={handleLeftKeyPress} />
+            ) : null,
         }}
       />
       <Typography className={classes.suggestion}>{suggestion}</Typography>
@@ -76,13 +90,16 @@ export default function Search() {
   );
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     position: 'relative',
     height: 'fit-content',
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
+    backgroundColor: 'white',
+    borderRadius: theme.shape.borderRadius,
+    marginBottom: theme.spacing(2),
   },
   searchInput: {
     position: 'absolute',
@@ -97,4 +114,4 @@ const useStyles = makeStyles({
     paddingRight: 14,
     color: '#aaa',
   },
-});
+}));
