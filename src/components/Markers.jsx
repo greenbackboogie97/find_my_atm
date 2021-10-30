@@ -1,5 +1,6 @@
+import { Button, Paper } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
-import { Marker, useMap } from 'react-leaflet';
+import { Marker, Tooltip, useMap } from 'react-leaflet';
 import StoreContext from '../context/Store';
 
 export default function Markers() {
@@ -49,7 +50,17 @@ export default function Markers() {
       <Marker
         key={record._id}
         position={[record.X_Coordinate, record.Y_Coordinate]}
-      />
+      >
+        <Tooltip direction='top' opacity={0.7} sticky>
+          <div style={{ direction: 'rtl' }}>
+            {record.Bank_Name} {record.Bank_Code}
+            <br />
+            {record.ATM_Address.length > 3 ? record.ATM_Address : 'כתובת חסרה'}
+            <br />
+            {record.ATM_Type}
+          </div>
+        </Tooltip>
+      </Marker>
     );
   });
 }
