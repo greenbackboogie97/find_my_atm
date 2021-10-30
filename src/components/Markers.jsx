@@ -1,4 +1,3 @@
-import { Button, Paper } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
 import { Marker, Tooltip, useMap } from 'react-leaflet';
 import StoreContext from '../context/Store';
