@@ -1,5 +1,5 @@
-import { makeStyles } from '@material-ui/core';
 import React, { useContext } from 'react';
+import { makeStyles } from '@material-ui/core';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import StoreContext from '../context/Store';
 import Markers from './Markers';

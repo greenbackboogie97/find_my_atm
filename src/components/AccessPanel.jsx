@@ -1,8 +1,8 @@
 import React from 'react';
 import { Divider, makeStyles } from '@material-ui/core';
 import Search from './Search';
-import ATM_LIST from './ATM_LIST';
-import Filters from './Filters';
+import Filters from './filters/Filters';
+import ATM_LIST from './atm_list/ATM_LIST';
 
 export default function AccessPanel() {
   const classes = useStyles();
