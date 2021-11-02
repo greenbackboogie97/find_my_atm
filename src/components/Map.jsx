@@ -2,7 +2,8 @@ import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import StoreContext from '../context/Store';
-import Markers from './Markers';
+import Markers from './markers/Markers';
+
 /////////////////////////
 // React Leaflet Icon Fix
 import L from 'leaflet';
@@ -21,13 +22,11 @@ export default function Map() {
   const classes = useStyles();
   const { setStore } = useContext(StoreContext);
 
-  const setMapRef = (map) => setStore((prev) => ({ ...prev, mapRef: map }));
-
   return (
     <MapContainer
       className={classes.root}
       center={[31.7, 35.2]}
-      whenCreated={setMapRef}
+      whenCreated={(map) => setStore((prev) => ({ ...prev, mapRef: map }))}
       zoom={7}
       minZoom={7}
       maxBounds={[
@@ -38,11 +37,7 @@ export default function Map() {
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        bounds={[
-          [38, 48],
-          [26, 24],
-        ]}
-      />
+        bounds={[[38, 48], [26, 24]]}/>
       <Markers />
     </MapContainer>
   );

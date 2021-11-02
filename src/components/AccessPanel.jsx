@@ -30,9 +30,9 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.spacing(6),
     padding: theme.spacing(4),
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   divider: {
-    marginBottom: theme.spacing(4),
+    marginBottom: theme.spacing(4)
   },
 }));

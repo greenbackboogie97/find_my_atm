@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { BiCaretDown, BiHandicap } from 'react-icons/bi';
 import { Collapse, FormGroup } from '@material-ui/core';
@@ -7,36 +7,35 @@ import StoreContext from '../../context/Store';
 
 export default function Filters() {
   const classes = useStyles();
-  const { store, setStore } = useContext(StoreContext);
+  const { store: {records, filter}, setStore } = useContext(StoreContext);
   const [banks, setBanks] = useState([]);
-  const [expanded, setExpanded] = useState();
-
-  const handleFiltersExpansion = () => setExpanded(!expanded);
+  const [expanded, toggleExpanded] = useReducer(expanded => !expanded, false);
 
   const handleFilterChange = (e, filter) =>
-    setStore((prev) => ({
-      ...prev,
+    setStore((prev) => ({...prev,
       filter: { ...prev.filter, [filter]: e.target.value },
     }));
 
   // Dynamic bank options
   useEffect(() => {
-    if (!store.records.length) return;
-    const rawBanks = store.records.map((record) => ({
+    const derivedBanks = records.list?.map((record) => ({
       bankCode: record.Bank_Code,
       bankName: record.Bank_Name,
     }));
+
     const filteredBanks = [];
-    rawBanks.forEach((bank) => {
+
+    derivedBanks.forEach((bank) => {
       if (filteredBanks.some((el) => el.bankCode === bank.bankCode)) return;
       return filteredBanks.push(bank);
     });
+
     setBanks(filteredBanks);
-  }, [store.records]);
+  }, [records]);
 
   return (
     <div className={classes.root}>
-      <span className={classes.filtersButton} onClick={handleFiltersExpansion}>
+      <span className={classes.filtersButton} onClick={toggleExpanded}>
         <BiCaretDown className={classes.icon} />
         פילטרים
       </span>
@@ -45,21 +44,23 @@ export default function Filters() {
         <FormGroup className={classes.filters}>
           {/* Bank Name Filter */}
           <SelectFilterBase
-            value={store.filter.bankName}
+            value={filter.bankName}
             onChange={(e) => handleFilterChange(e, 'bankName')}
+            disabled={!banks.length}
             filterLabel={{ title: 'בנק' }}
             items={[
               { value: '', title: 'הכל' },
-              ...banks.map((bank) => ({
-                value: bank.bankName,
-                title: bank.bankName,
+              ...banks.map(({bankName, bankCode}) => ({
+                value: bankName,
+                title: bankName,
+                key: bankCode,
               })),
             ]}
           />
 
           {/* ATM Type Filter */}
           <SelectFilterBase
-            value={store.filter.ATM_Type}
+            value={filter.ATM_Type}
             onChange={(e) => handleFilterChange(e, 'ATM_Type')}
             filterLabel={{ title: 'סוג כספומט' }}
             items={[
@@ -74,7 +75,7 @@ export default function Filters() {
 
           {/* Accessible Filter */}
           <SelectFilterBase
-            value={store.filter.accessible}
+            value={filter.accessible}
             onChange={(e) => handleFilterChange(e, 'accessible')}
             filterLabel={{
               title: 'נגיש',
@@ -97,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
-    padding: theme.spacing(2),
+    padding: theme.spacing(2)
   },
   filtersButton: {
     display: 'flex',
@@ -106,13 +107,13 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 12,
     marginBottom: theme.spacing(2),
     padding: theme.spacing(1),
-    cursor: 'pointer',
+    cursor: 'pointer'
   },
   filters: {
     alignItems: 'flex-end',
   },
   icon: {
     marginRight: theme.spacing(1),
-    fontSize: 15,
+    fontSize: 15
   },
 }));
