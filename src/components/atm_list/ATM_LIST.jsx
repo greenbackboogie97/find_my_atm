@@ -55,7 +55,6 @@ export default function ATM_LIST() {
           } = record;
 
           if (!X_Coordinate || !Y_Coordinate ) return null;
-          if (ATM_Address === 'המלאכה 22') console.log([X_Coordinate, Y_Coordinate]);
           return (
             <ATM_LIST_CARD
               key={_id}
