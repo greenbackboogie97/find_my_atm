@@ -1,33 +1,82 @@
-import React, { useContext } from 'react';
-import { makeStyles } from '@material-ui/core';
+import React, { useContext, useEffect, useState } from 'react';
+import { Button, makeStyles } from '@material-ui/core';
 import ATM_LIST_CARD from './ATM_LIST_CARD';
 import ResultsTag from './ResultsTag';
-import FilteredRecordsContext from '../../context/FilteredRecordsContext';
+import StoreContext from '../../context/Store';
+import { getAllATMS } from '../../services/AutoDevicesAPI';
 
 export default function ATM_LIST() {
   const classes = useStyles();
-  const { filteredRecords } = useContext(FilteredRecordsContext);
+  const { store: {records, filter}, setStore } = useContext(StoreContext);
+  const [filteredList, setFilteredList] = useState(records.list);
+
+  const handleLoadClick = () => {
+    getAllATMS(records.page).then((records) =>
+      setStore((prev) => ({
+        ...prev,
+        records: {
+          list: prev.records.list.concat(records),
+          page: prev.records.page++,
+        },
+      }))
+    );
+  };
+
+  useEffect(() => {
+    setFilteredList(
+      records.list.filter((record) => {
+        return (
+          (filter.accessible
+            ? filter.accessible === 'כן'
+              ? record.Handicap_Access === 'כן'
+              : record.Handicap_Access === 'לא'
+            : true) &&
+          (filter.ATM_Type
+            ? filter.ATM_Type === 'מכשיר מידע/או מתן הוראות\n'
+              ? record.ATM_Type === 'מכשיר מידע/או מתן הוראות\n'
+              : record.ATM_Type === 'משיכת מזומן'
+            : true) &&
+          (filter.bankName
+            ? filter.bankName === record.Bank_Name
+            : true)
+        );
+      })
+    );
+  }, [filter, records]);
 
   return (
     <>
-      {!!filteredRecords.length && (
-        <ResultsTag number={filteredRecords.length} />
+      {filteredList.length && (
+        <ResultsTag number={filteredList.length} />
       )}
 
       <ul className={classes.list}>
-        {filteredRecords.map((record) => {
+        {filteredList.map((record) => {
+          const {
+            _id,
+            Bank_Name,
+            ATM_Address,
+            ATM_Type,
+            Handicap_Access,
+            X_Coordinate,
+            Y_Coordinate,
+          } = record;
           return (
             <ATM_LIST_CARD
-              key={record._id}
-              bankName={record.Bank_Name}
-              address={record.ATM_Address}
-              typeATM={record.ATM_Type}
-              accessible={record.Handicap_Access === 'כן'}
-              coords={[record.X_Coordinate, record.Y_Coordinate]}
+              key={_id}
+              bankName={Bank_Name}
+              address={ATM_Address}
+              typeATM={ATM_Type}
+              accessible={Handicap_Access === 'כן'}
+              coords={[X_Coordinate, Y_Coordinate]}
             />
           );
         })}
       </ul>
+
+      <Button className={classes.loadMore} onClick={handleLoadClick}>
+        טען עוד
+      </Button>
     </>
   );
 }
@@ -40,5 +89,9 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     overflow: 'auto',
     zIndex: 1,
+    borderRadius: 20,
+  },
+  loadMore: {
+    marginTop: theme.spacing(3),
   },
 }));
