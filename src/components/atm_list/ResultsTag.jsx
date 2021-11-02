@@ -1,13 +1,13 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
 
-export default function ResultsTag(props) {
+export default function ResultsTag({number}) {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <Typography className={classes.results} variant='caption'>
-        {props.number} תוצאות
+        {number} תוצאות
       </Typography>
     </div>
   );
