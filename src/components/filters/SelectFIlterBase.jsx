@@ -2,41 +2,20 @@ import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { FormControlLabel, MenuItem, Select } from '@material-ui/core';
 
-function FilterLabel(props) {
-  return (
-    <span style={{ fontSize: 14, display: 'flex', alignItems: 'center' }}>
-      {props.icon}
-      {props.title}
-    </span>
-  );
-}
-
-export default function SelectFilterBase(props) {
+export default function SelectFilterBase({ value, onChange, disabled, items, filterLabel }) {
   const classes = useStyles();
+
   return (
     <FormControlLabel
       control={
-        <Select
-          className={classes.root}
-          value={props.value}
-          onChange={props.onChange}
-          disabled={props.disabled}
-        >
-          {props.items.map((item) => {
-            return (
-              <MenuItem className={classes.item} value={item.value}>
+        <Select className={classes.root} value={value} onChange={onChange} disabled={disabled} >
+          {items.map((item, index) => (
+              <MenuItem key={item.key || index} className={classes.item} value={item.value}>
                 {item.title}
-              </MenuItem>
-            );
-          })}
+              </MenuItem>))}
         </Select>
       }
-      label={
-        <FilterLabel
-          title={props.filterLabel.title}
-          icon={props.filterLabel.icon}
-        />
-      }
+      label={<span className={classes.label}>{filterLabel.icon} {filterLabel.title}</span>}
     />
   );
 }
@@ -50,4 +29,9 @@ const useStyles = makeStyles((theme) => ({
   item: {
     direction: 'rtl',
   },
+  label: {
+    fontSize: 14,
+     display: 'flex',
+      alignItems: 'center' 
+  }
 }));

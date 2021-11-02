@@ -1,9 +1,9 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { makeStyles, TextField, Typography } from '@material-ui/core';
 import StoreContext from '../context/Store';
-import getATMs from '../services/AutoDevicesAPI';
 import { MdArrowLeft } from 'react-icons/md';
 import { withStyles } from '@material-ui/styles';
+import { getATMsByCity } from '../services/AutoDevicesAPI';
 
 const LeftArrowAdornment = withStyles({
   root: {
@@ -24,22 +24,15 @@ export default function Search() {
   const classes = useStyles();
   const [value, setValue] = useState('');
   const [suggestion, setSuggestion] = useState('');
-  const { setStore } = useContext(StoreContext);
+  const {  setStore } = useContext(StoreContext);
 
   const handleValueChange = (e) => setValue(e.target.value);
 
-  const handleLeftKeyPress = (e) => {
-    if (!suggestion) return;
-    if (e.key === 'ArrowLeft') {
-      setValue(suggestion);
-      setSuggestion('');
-    }
-  };
+  const handleLeftKeyPress = (e) => (suggestion && e.key === 'ArrowLeft' && setValue(suggestion) && setSuggestion(''))
 
   const getRecords = useCallback(async () => {
     setSuggestion('');
-    const results = await getATMs(value);
-    if (!results.length) return;
+    const results = await getATMsByCity(value);
 
     const filterdByCity = results.filter((record) => record.City === value);
 
@@ -48,26 +41,12 @@ export default function Search() {
         results.filter((record) => record.City.startsWith(value))[0]?.City
       );
 
-    const validCoords = filterdByCity.filter((record) => {
-      return (
-        record.X_Coordinate >= 29 &&
-        record.X_Coordinate <= 33 &&
-        record.Y_Coordinate >= 34 &&
-        record.Y_Coordinate <= 36
-      );
-    });
+      setStore(prev => ({...prev, records: {...prev.records, list: filterdByCity }}));
+  }, [setStore, value]);
 
-    setStore((prev) => ({ ...prev, records: [...validCoords] }));
-  }, [value, setStore]);
+  useEffect(() => value.length && getRecords(), [value, getRecords]);
 
-  useEffect(() => {
-    if (!value.length) return;
-    getRecords();
-  }, [value, getRecords]);
-
-  useEffect(() => {
-    if (!value.length) return setSuggestion('');
-  }, [suggestion, value]);
+  useEffect(() => !value.length && setSuggestion(''), [suggestion, value]);
 
   return (
     <div className={classes.root}>
