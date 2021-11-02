@@ -41,6 +41,7 @@ export default function Search() {
         results.filter((record) => record.City.startsWith(value))[0]?.City
       );
 
+      
       setStore(prev => ({...prev, records: {...prev.records, list: filterdByCity }}));
   }, [setStore, value]);
 

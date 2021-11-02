@@ -11,10 +11,10 @@ export default function App() {
   const [store, setStore] = useState(initialState);
 
   useEffect(() => {
-    getAllATMS(1).then((records) =>
+    getAllATMS().then((records) =>
       setStore((prev) => ({
         ...prev,
-        records: { page: prev.records.page++, list: records },
+        records: { ...prev.records, list: records },
       }))
     );
   }, []);
