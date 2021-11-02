@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {  useContext, useEffect, useState } from 'react';
 import { Button, makeStyles } from '@material-ui/core';
 import ATM_LIST_CARD from './ATM_LIST_CARD';
 import ResultsTag from './ResultsTag';
@@ -13,28 +13,25 @@ export default function ATM_LIST() {
     setStore(prev => ({...prev, records: {...prev.records, page: prev.records.page + 1 }}))
   };
 
-  const loadRecords = useCallback(() => setFilteredList(
-    records.list.slice(0, records.page * 100).filter((record) => {
-      return (
-        (filter.accessible
-          ? filter.accessible === 'כן'
-            ? record.Handicap_Access === 'כן'
-            : record.Handicap_Access === 'לא'
-          : true) &&
-        (filter.ATM_Type
-          ? filter.ATM_Type === 'מכשיר מידע/או מתן הוראות\n'
-            ? record.ATM_Type === 'מכשיר מידע/או מתן הוראות\n'
-            : record.ATM_Type === 'משיכת מזומן'
-          : true) &&
-        (filter.bankName
-          ? filter.bankName === record.Bank_Name
-          : true)
-      )})
-      ), [filter, records])
-
   useEffect(() => {
-    loadRecords();
-  }, [filter, records, loadRecords]);
+    setFilteredList(
+      records.list.slice(0, records.page * 100).filter((record) => {
+        return (
+          (filter.accessible
+            ? filter.accessible === 'כן'
+              ? record.Handicap_Access === 'כן'
+              : record.Handicap_Access === 'לא'
+            : true) &&
+          (filter.ATM_Type
+            ? filter.ATM_Type === 'מכשיר מידע/או מתן הוראות\n'
+              ? record.ATM_Type === 'מכשיר מידע/או מתן הוראות\n'
+              : record.ATM_Type === 'משיכת מזומן'
+            : true) &&
+          (filter.bankName ? filter.bankName === record.Bank_Name : true)
+        );
+      })
+    );
+  }, [filter, records])
 
   return (
     <>
@@ -54,7 +51,6 @@ export default function ATM_LIST() {
             Y_Coordinate,
           } = record;
 
-          if (!X_Coordinate || !Y_Coordinate ) return null;
           return (
             <ATM_LIST_CARD
               key={_id}
@@ -64,8 +60,8 @@ export default function ATM_LIST() {
               accessible={Handicap_Access === 'כן'}
               coords={[X_Coordinate, Y_Coordinate]}
             />
-          );
-        })}
+           );
+        })} 
       </ul>
 
       <Button className={classes.loadMore} onClick={handleLoadClick}>

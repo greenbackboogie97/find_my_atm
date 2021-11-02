@@ -34,15 +34,34 @@ export default function Search() {
     setSuggestion('');
     const results = await getATMsByCity(value);
 
-    const filterdByCity = results.filter((record) => record.City === value);
+     const validCoords = results.filter(record => {
+      return (record.X_Coordinate > 29 &&
+        record.X_Coordinate < 33 &&
+        record.Y_Coordinate > 34 &&
+        record.Y_Coordinate < 36)
+    })
+
+
+    const invalidCoords = results.filter(record => {
+      return (record.X_Coordinate < 29 ||
+        record.X_Coordinate > 33.5 ||
+        record.Y_Coordinate < 34 ||
+        record.Y_Coordinate > 36)
+    })
+
+    const fixedCoords = invalidCoords.map(record => ({...record, X_Coordinate: record.Y_Coordinate, Y_Coordinate: record.X_Coordinate}))
+
+    const newList = [...validCoords, ...fixedCoords]
+
+    const filterdByCity = newList.filter((record) => record.City === value);
 
     if (!filterdByCity.length)
       return setSuggestion(
-        results.filter((record) => record.City.startsWith(value))[0]?.City
+        newList.filter((record) => record.City.startsWith(value))[0]?.City
       );
 
       
-      setStore(prev => ({...prev, records: {...prev.records, list: filterdByCity }}));
+      setStore(prev => ({...prev, records: {...prev.records, list: newList }}));
   }, [setStore, value]);
 
   useEffect(() => value.length && getRecords(), [value, getRecords]);

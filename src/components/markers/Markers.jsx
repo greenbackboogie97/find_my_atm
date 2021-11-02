@@ -12,7 +12,7 @@ export default function Markers() {
   const [filteredRecords, setFilteredRecords] = useState([]);
 
   useEffect(() => {
-    if (!mapRef) return;
+    if (!mapRef || !filteredRecords.length) return;
     let bounds = filteredRecords.map((record) => [
       record.X_Coordinate,
       record.Y_Coordinate,
@@ -22,11 +22,10 @@ export default function Markers() {
         [33.7, 42.2],
         [29.3, 28.2],
       ];
-    mapRef.fitBounds(bounds, { animate: true, duration: 3 });
+    mapRef.fitBounds(bounds, { animate: true, duration: 1 });
   }, [mapRef, filteredRecords]);
 
   useEffect(() => {
-    if (!mapRef) return;
     setFilteredRecords(
       records.list.filter((record) => {
         return (
@@ -44,7 +43,7 @@ export default function Markers() {
         );
       })
     );
-  }, [filter, records, mapRef]);
+  }, [filter, records]);
 
   const createClusterCustomIcon = function (cluster) {
     return L.divIcon({

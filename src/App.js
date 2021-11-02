@@ -11,11 +11,28 @@ export default function App() {
   const [store, setStore] = useState(initialState);
 
   useEffect(() => {
-    getAllATMS().then((records) =>
+    getAllATMS().then((records) => {
+      const validCoords = records.filter(record => {
+        return (record.X_Coordinate > 29 &&
+          record.X_Coordinate < 33 &&
+          record.Y_Coordinate > 34 &&
+          record.Y_Coordinate < 36)
+      })
+
+      const invalidCoords = records.filter(record => {
+        return (record.X_Coordinate < 29 ||
+          record.X_Coordinate > 33.5 ||
+          record.Y_Coordinate < 34 ||
+          record.Y_Coordinate > 36)
+      })
+
+      const fixedCoords = invalidCoords.map(record => ({...record, X_Coordinate: record.Y_Coordinate, Y_Coordinate: record.X_Coordinate}))
+
       setStore((prev) => ({
         ...prev,
-        records: { ...prev.records, list: records },
+        records: { ...prev.records, list: [...validCoords, ...fixedCoords]},
       }))
+    }
     );
   }, []);
 
