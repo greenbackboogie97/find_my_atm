@@ -10,7 +10,7 @@ export default function Atm_List_Card({coords, bankName, bankCode, address, type
   const { store } = useContext(StoreContext);
 
   const handleCardClick = () => {
-    store.mapRef.flyTo(coords, 15);
+    store.mapRef.flyTo(coords, 17);
   };
 
   return (
